@@ -10,6 +10,16 @@ import java.util.stream.Collectors;
 public class CompletableFuturesTest {
 
     @Test
+    public void test3StageGetWithCompose() throws Exception {
+        getFirst()
+                .thenCompose(firstStr -> getSecondDependingOnFirst(firstStr)
+                    .thenCompose(secondStr -> getThirdDependingOnFirstAndSecond(firstStr, secondStr))
+        ).whenComplete((thirdStr, ex) -> {
+            System.out.println("nested: " + thirdStr + (ex != null ? " : " +ex.getMessage() : ""));
+        });
+    }
+
+    @Test
     public void test3StageGetNested() throws Exception {
         CompletableFuture<String> firstFuture = getFirst();
         firstFuture.whenComplete((firstStr, firstEx) -> {
